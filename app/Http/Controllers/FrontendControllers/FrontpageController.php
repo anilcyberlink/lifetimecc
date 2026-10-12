@@ -10,7 +10,7 @@ use App\VerifyUser;
 use App\Mail\SendMail;
 use App\Model\Donation;
 use App\Mail\VerifyMail;
-use App\Mail\ContactMail;
+use App\Mail\ReferralMail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\SendMailContact;
@@ -168,6 +168,13 @@ class FrontpageController extends Controller
       'gp_name' => 'nullable|string|max:255',
       'gp_phone' => 'nullable|string|max:30',
       'restrictive_practices' => 'required|in:Yes,No',
+      'behaviour_support_plan' => [
+        'required_if:restrictive_practices,Yes',
+        'nullable',
+        'file',
+        'mimes:pdf,doc,docx',
+        'max:2048',
+      ],
       'has_safety_risks' => 'required|in:Yes,No',
       'safety_details' => 'nullable|string|max:2000',
       'referrer_name' => 'nullable|string|max:255',
@@ -210,7 +217,15 @@ class FrontpageController extends Controller
     $referral->consent = $request->boolean('consent');
     $referral->signature_name = $validated['signature_name'];
     $referral->signature_date = $validated['signature_date'];
+    if ($request->hasFile('behaviour_support_plan')) {
+      $referral->behaviour_support_plan = $request
+        ->file('behaviour_support_plan')
+        ->store('referral-documents', 'public');
+    }
     $referral->save();
+
+    return new ReferralMail($referral);
+    // Mail::to('info@lifetimecommunitycare.com.au')->send(new ReferralMail($referral));
 
     return redirect()->back()->with('success', 'Referral submitted successfully.');
   }

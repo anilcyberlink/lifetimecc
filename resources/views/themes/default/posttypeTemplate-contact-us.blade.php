@@ -335,10 +335,12 @@
                                     </div>
 
                                     <div class="mt-3" id="behaviourPlanGroup">
-                                        <label for="behaviour_support_plan">Behaviour Support Plan</label>
-                                        <input type="file" id="behaviour_support_plan" name="behaviour_support_plan"
-                                            accept=".pdf,.doc,.docx">
-                                        <small class="referral-hint">Accepted formats: PDF, DOC or DOCX.</small>
+                                        <label for="behaviour_support_plan">Behaviour Support Plan <span>*</span></label>
+                                        <input type="file" id="behaviour_support_plan" name="behaviour_support_plan" accept=".pdf,.doc,.docx">
+                                        <small class="referral-hint">Accepted formats: PDF, DOC or DOCX. Required if restrictive practices are in place.</small>
+                                        @error('behaviour_support_plan')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
                                     </div>
 
                                     <label class="mt-4">Are there known safety risks or triggers? <span>*</span></label>

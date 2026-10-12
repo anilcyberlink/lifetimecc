@@ -31,6 +31,7 @@ class Referral extends Model
         'gp_name',
         'gp_phone',
         'restrictive_practices',
+        'behaviour_support_plan',
         'has_safety_risks',
         'safety_details',
         'referrer_name',
