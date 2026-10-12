@@ -95,6 +95,18 @@
                             <div class="referral-value">{{ $data->safety_details ?: '-' }}</div>
                         </div>
                     </div>
+                    <div class="referral-item" style="grid-column: 1 / -1;">
+                        <span class="referral-label">Behaviour Support Plan</span>
+                        <div class="referral-value">
+                            @if ($data->behaviour_support_plan)
+                                <a href="{{ asset('storage/' . $data->behaviour_support_plan) }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i>View Uploaded File
+                                </a>
+                            @else
+                                -
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 <div class="referral-section">
                     <h4><i class="fa fa-address-card-o"></i> Referrer Details</h4>
