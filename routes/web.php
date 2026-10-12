@@ -22,9 +22,10 @@ Route::get('{parenturi}/{uri}.html', 'FrontendControllers\FrontpageController@pa
 Route::get('page/photogallery/{category_id}', 'FrontendControllers\FrontpageController@photo_gallery');
 
 //Contact Us 
-Route::post('/contact-us','FrontendControllers\ContactUsController@store')->name('contact-us');
-Route::post('/career','FrontendControllers\CareerController@store')->name('career');
+Route::post('/contact-us', 'FrontendControllers\ContactUsController@store')->name('contact-us');
+Route::post('/career', 'FrontendControllers\CareerController@store')->name('career');
 
+Route::post('/referral', 'FrontendControllers\FrontpageController@referral')->name('referral');
 
 // Send Mail
 Route::post('page/contact/sendmail', 'FrontendControllers\FrontpageController@sendmail')->name('sendmail');
@@ -32,7 +33,7 @@ Route::post('page/contact/contact-sendmail', 'FrontendControllers\FrontpageContr
 Route::get('category/{uri}', 'FrontendControllers\FrontpageController@category_navigation')->name('category.navigation');
 
 Route::get('/category/{category?}/{uri?}', 'FrontendControllers\FrontpageController@news_category')->name('news-category');
-Route::post('contact-form','FrontendControllers\FrontpageController@contact_form')->name('contact-form');
+Route::post('contact-form', 'FrontendControllers\FrontpageController@contact_form')->name('contact-form');
 // Route::get('member/membercaptcha/{uri?}', 'FrontendControllers\FrontpageController@refreshCaptcha')->name('member-captcha');
 
 // Route::get('/fetch/districts/{province_id}', 'FrontendControllers\FrontpageController@loadDistricts');
@@ -66,7 +67,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/donation-details/{id?}', 'DashboardController@donation_details')->name('donation-details');
     Route::get('admin/member-details/{id?}', 'DashboardController@member_details')->name('member-details');
     Route::post('payment-verified/{id?}', 'DashboardController@isverified')->name('payment-verified');
-    Route::delete('payment-delete/{id}','DashboardController@deletePayment')->name('delete-payment');
+    Route::delete('payment-delete/{id}', 'DashboardController@deletePayment')->name('delete-payment');
+
+
+    // Contact Us
+    Route::get('contact-us', 'AdminControllers\Inquiry\InquiryController@index')->name('contact-us');
+    Route::get('career', 'AdminControllers\Inquiry\InquiryController@careerIndex')->name('career');
+
+    // Referral
+    Route::get('admin/referral-list', 'AdminControllers\Inquiry\InquiryController@referral')->name('referral.list');
+    Route::get('admin/referral-show/{id}', 'AdminControllers\Inquiry\InquiryController@referral_show')->name('referral.show');
 
 
     Route::get('admin/admin-user', 'AdminControllers\Members\UserController@admin_user');
@@ -88,18 +98,18 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
 
-     // Upload multiple image
-    Route::get('post/image/{id}','AdminControllers\Galleries\ImageController@index')->name('post.image.index');
-    Route::post('post-image/create','AdminControllers\Galleries\ImageController@store')->name('post.image.store');
+    // Upload multiple image
+    Route::get('post/image/{id}', 'AdminControllers\Galleries\ImageController@index')->name('post.image.index');
+    Route::post('post-image/create', 'AdminControllers\Galleries\ImageController@store')->name('post.image.store');
     Route::delete('delete_post_image/{id}', 'AdminControllers\Galleries\ImageController@delete_image_post')->name('delete_post_image');
 
     Route::get('adminimg/multiplephoto/{post_id}', 'AdminControllers\Posts\PostImageController@upload_form')->name('admin.multiplephoto');
     Route::post('multiplephoto/store', 'AdminControllers\Posts\PostImageController@store')->name('multiplephoto.store');
     Route::get('adminimg/multiplephoto/{post_id}/{id}/edit', 'AdminControllers\Posts\PostImageController@edit')->name('edit.multiplephoto');
-     Route::put('adminimg/multiplephoto/{id}', 'AdminControllers\Posts\PostImageController@update')->name('multiplephoto.update');
+    Route::put('adminimg/multiplephoto/{id}', 'AdminControllers\Posts\PostImageController@update')->name('multiplephoto.update');
     Route::delete('adminimg/multiplephoto/{id}', 'AdminControllers\Posts\PostImageController@destroy');
-    
-     // Upload multiple video
+
+    // Upload multiple video
     Route::get('admin/multiplevideo/{post_id}', 'AdminControllers\Posts\MultipleVideoController@index')->name('admin.multiplevideo.index');
     Route::get('admin/multiplevideo/{post_id}/create', 'AdminControllers\Posts\MultipleVideoController@create')->name('admin.multiplevideo.create');
     Route::get('admin/multiplevideo/{post_id}/{id}/edit', 'AdminControllers\Posts\MultipleVideoController@edit')->name('admin.multiplevideo.edit');
@@ -108,8 +118,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('admin/multiplevideo/{post_id}/{id}', 'AdminControllers\Posts\MultipleVideoController@destroy')->name('admin.multiplevideo.destroy');
 
     Route::resource('admin.multiplebanner', 'AdminControllers\MultipleBanners\MultipleBannerController');
-    Route::get('admin/permissionedit/{user}', 'AdminControllers\Members\UserController@permission_edit')->name('user.permissionEdit');;
-    Route::put('admin/permissionedit/{user}', 'AdminControllers\Members\UserController@permission_update')->name('user.permissionUpdate');;
+    Route::get('admin/permissionedit/{user}', 'AdminControllers\Members\UserController@permission_edit')->name('user.permissionEdit');
+    ;
+    Route::put('admin/permissionedit/{user}', 'AdminControllers\Members\UserController@permission_update')->name('user.permissionUpdate');
+    ;
 
     Route::get('admin/assignroles/{id}', 'AdminControllers\Members\UserController@assign_roles')->name('user.assignroles');
     Route::put('admin/assignroles/{user}', 'AdminControllers\Members\UserController@update_roles')->name('user.update_roles');
@@ -153,7 +165,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('delete_portfolio_cat/{id}', 'AdminControllers\Portfolios\PortfolioCategoryController@delete_category_thumb');
 
 
-// Associated Post
+    // Associated Post
     Route::get('admin/associated/{type}/{id}', 'AdminControllers\Posts\AssociatedPostController@associated_post')->name('associated.post.index');
     Route::get('admin/associated/{type}/{id}/create', 'AdminControllers\Posts\AssociatedPostController@create')->name('admin.associated.create');
     Route::post('admin/associated/{type}/{id}/store', 'AdminControllers\Posts\AssociatedPostController@store')->name('admin.associated.store');
@@ -161,17 +173,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/associated/{type}/{id}/edit', 'AdminControllers\Posts\AssociatedPostController@edit')->name('admin.associated.edit');
     Route::put('admin/associated/{type}/{id}', 'AdminControllers\Posts\AssociatedPostController@update')->name('admin.associated.update');
 
-// Associated Portfolios
+    // Associated Portfolios
     Route::get('admin/associates/{type}/{id}', 'AdminControllers\Portfolios\AssociatedPortfolioController@associated_post')->name('associates.post.index');
     Route::get('admin/associates/{type}/{id}/create', 'AdminControllers\Portfolios\AssociatedPortfolioController@create')->name('admin.associates.create');
     Route::post('admin/associates/{type}/{id}/store', 'AdminControllers\Portfolios\AssociatedPortfolioController@store')->name('admin.associates.store');
     Route::delete('admin/associates/{type}/{id}', 'AdminControllers\Portfolios\AssociatedPortfolioController@destroy')->name('admin.associates.destroy');
     Route::get('admin/associates/{type}/{id}/edit', 'AdminControllers\Portfolios\AssociatedPortfolioController@edit')->name('admin.associates.edit');
     Route::put('admin/associates/{type}/{id}', 'AdminControllers\Portfolios\AssociatedPortfolioController@update')->name('admin.associates.update');
-
-// Contact Us
-    Route::get('contact-us', 'AdminControllers\Inquiry\InquiryController@index')->name('contact-us');
-    Route::get('career', 'AdminControllers\Inquiry\InquiryController@careerIndex')->name('career');
 
 
     // Upload multiple document
