@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AppointmentModel;
 use App\Models\ContactUs;
 use App\Models\Career;
+use App\Models\Referral;
 
 class InquiryController extends Controller
 {
@@ -15,6 +16,17 @@ class InquiryController extends Controller
     {
         $data = ContactUs::orderBy('id','desc')->get();
         return view('admin.contact.index',compact('data'));    
+    }
+    public function referral()
+    {
+        $data = Referral::orderBy('created_at','desc')->get();
+        // dd($data);
+        return view('admin.contact.referral',compact('data'));    
+    }
+    public function referral_show($id)
+    {
+        $data = Referral::findOrFail($id);
+        return view('admin.contact.show',compact('data'));    
     }
 
     public function careerIndex()

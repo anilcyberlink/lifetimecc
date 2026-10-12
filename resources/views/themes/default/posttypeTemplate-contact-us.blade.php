@@ -31,7 +31,7 @@
                     <aside class="col-lg-4">
                         <div class="referral-sidebar">
                             <span class="referral-sidebar-label">WE ARE HERE TO HELP</span>
-                            <h2>Let's get started.</h2>
+                            <h2>Get in touch</h2>
                             <p>
                                 Complete the referral form with the participant's details
                                 and support requirements. Our team can use this information
@@ -42,9 +42,17 @@
                                 <span class="referral-icon">
                                     <i class="bi bi-geo-alt"></i>
                                 </span>
+
                                 <div>
                                     <strong>Our Location</strong>
                                     <p>{{ $setting->location1 }}</p>
+
+                                    @if (!empty($setting->google_map2))
+                                        <a href="{{ $setting->google_map2 }}" target="_blank" rel="noopener noreferrer"
+                                            class="referral-map-link">
+                                            Get directions <i class="bi bi-arrow-up-right"></i>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
 
@@ -82,21 +90,15 @@
                                 </div>
                             </div>
 
-                            <div class="referral-help-box">
+                            {{-- <div class="referral-help-box">
                                 <i class="bi bi-shield-check"></i>
                                 <div>
                                     <strong>Your information matters</strong>
                                     <p>Participant information should be handled securely
                                         and only by authorised personnel.</p>
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            @if (!empty($setting->google_map2))
-                                <a href="{{ $setting->google_map2 }}" target="_blank" rel="noopener noreferrer"
-                                    class="referral-map-link">
-                                    Get directions <i class="bi bi-arrow-up-right"></i>
-                                </a>
-                            @endif
                         </div>
                     </aside>
 
@@ -117,7 +119,7 @@
 
                             @include('themes.default.common.message')
 
-                            <form action="" method="POST" enctype="multipart/form-data" id="referralForm">
+                            <form action="{{route('referral')}}" method="POST" enctype="multipart/form-data" id="referralForm">
                                 @csrf
 
                                 {{-- 1. Participant Details --}}
@@ -199,12 +201,12 @@
                                     <label>Indigenous status</label>
                                     <div class="referral-options">
                                         @foreach ([
-            'No' => 'No',
-            'Aboriginal' => 'Yes, Aboriginal',
-            'Torres Strait Islander' => 'Yes, Torres Strait Islander',
-            'Both' => 'Yes, both',
-            'Prefer not to say' => 'Prefer not to say',
-        ] as $value => $label)
+                                            'No' => 'No',
+                                            'Aboriginal' => 'Yes, Aboriginal',
+                                            'Torres Strait Islander' => 'Yes, Torres Strait Islander',
+                                            'Both' => 'Yes, both',
+                                            'Prefer not to say' => 'Prefer not to say',
+                                        ] as $value => $label)
                                             <label class="referral-check">
                                                 <input type="radio" name="indigenous_status"
                                                     value="{{ $value }}" @checked(old('indigenous_status') === $value)>
@@ -439,7 +441,10 @@
                                         The typed name records the declaration; it is not a digital signature verification
                                         mechanism.
                                     </p>
+                                    
                                 </fieldset>
+                                {!! HCaptcha::renderJs() !!}
+                                {!! HCaptcha::display() !!}
 
                                 <div class="referral-submit-area">
                                     <p><i class="bi bi-lock"></i> Please ensure the information is accurate before
@@ -457,502 +462,7 @@
             </div>
         </section>
     </main>
-    <style>
-        .referral-page {
-            --ref-primary: #155e59;
-            --ref-primary-dark: #104843;
-            --ref-accent: #dcefe9;
-            --ref-text: #243b3a;
-            --ref-muted: #71817f;
-            --ref-border: #e2eae7;
-            background: #f5f8f7;
-            color: var(--ref-text);
-        }
-
-        .referral-hero {
-            position: relative;
-            isolation: isolate;
-            padding: 100px 0 90px;
-            background-color: #174c48;
-            background-position: center;
-            background-size: cover;
-        }
-
-        .referral-hero-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            background: linear-gradient(100deg, rgba(9, 43, 40, .92), rgba(13, 65, 59, .68));
-        }
-
-        .referral-eyebrow,
-        .referral-sidebar-label {
-            display: inline-block;
-            color: #75c8b4;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 14px;
-        }
-
-        .referral-hero h1 {
-            max-width: 760px;
-            color: #fff;
-            font-size: clamp(32px, 4vw, 52px);
-            font-weight: 750;
-            letter-spacing: -1.5px;
-            margin: 0 0 15px;
-        }
-
-        .referral-hero p {
-            max-width: 620px;
-            color: rgba(255, 255, 255, .84);
-            font-size: 16px;
-            line-height: 1.8;
-            margin: 0;
-        }
-
-        .referral-main {
-            padding: 70px 0;
-        }
-
-        .referral-sidebar {
-            position: sticky;
-            top: 30px;
-            padding: 30px;
-            border-radius: 16px;
-            background: #fff;
-            border: 1px solid var(--ref-border);
-        }
-
-        .referral-sidebar h2 {
-            font-size: 29px;
-            font-weight: 750;
-            letter-spacing: -.7px;
-            margin-bottom: 14px;
-        }
-
-        .referral-sidebar>p {
-            color: var(--ref-muted);
-            line-height: 1.8;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .referral-contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 13px;
-            margin-top: 23px;
-        }
-
-        .referral-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 42px;
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            color: var(--ref-primary);
-            background: #eaf5f1;
-            font-size: 18px;
-        }
-
-        .referral-contact-item strong {
-            display: block;
-            font-size: 13px;
-            margin: 1px 0 5px;
-        }
-
-        .referral-contact-item p,
-        .referral-contact-item a {
-            color: var(--ref-muted);
-            font-size: 13px;
-            line-height: 1.7;
-            overflow-wrap: anywhere;
-            margin: 0;
-            text-decoration: none;
-        }
-
-        .referral-help-box {
-            display: flex;
-            gap: 12px;
-            padding: 17px;
-            margin-top: 30px;
-            border-radius: 10px;
-            background: #edf6f3;
-            color: var(--ref-primary);
-        }
-
-        .referral-help-box>i {
-            font-size: 21px;
-        }
-
-        .referral-help-box strong {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .referral-help-box p {
-            color: #5e7772;
-            font-size: 12px;
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        .referral-map-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 24px;
-            color: var(--ref-primary);
-            font-weight: 700;
-            font-size: 13px;
-            text-decoration: none;
-        }
-
-        .referral-form-card {
-            padding: 38px;
-            background: #fff;
-            border: 1px solid var(--ref-border);
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(23, 67, 59, .035);
-        }
-
-        .referral-form-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            padding-bottom: 28px;
-            border-bottom: 1px solid var(--ref-border);
-        }
-
-        .referral-form-heading h2 {
-            font-size: clamp(24px, 3vw, 32px);
-            font-weight: 750;
-            letter-spacing: -.8px;
-            margin: 0 0 8px;
-        }
-
-        .referral-form-heading p {
-            color: var(--ref-muted);
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .referral-form-symbol {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 56px;
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            background: var(--ref-accent);
-            color: var(--ref-primary);
-            font-size: 25px;
-        }
-
-        .referral-fieldset {
-            min-width: 0;
-            padding: 30px 0;
-            border: 0;
-            border-bottom: 1px solid var(--ref-border);
-            margin: 0;
-        }
-
-        .referral-fieldset legend {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            float: none;
-            width: 100%;
-            padding: 0;
-            margin-bottom: 24px;
-            color: var(--ref-text);
-            font-size: 18px;
-            font-weight: 750;
-        }
-
-        .referral-step {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 37px;
-            width: 37px;
-            height: 37px;
-            border-radius: 10px;
-            color: var(--ref-primary);
-            background: #eaf5f1;
-            font-size: 12px;
-            letter-spacing: .5px;
-        }
-
-        .referral-fieldset label:not(.referral-check):not(.referral-service-option) {
-            display: block;
-            color: #344a47;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 9px;
-        }
-
-        .referral-fieldset label>span:not(.referral-step) {
-            color: #b64a40;
-        }
-
-        .referral-fieldset input:not([type="checkbox"]):not([type="radio"]),
-        .referral-fieldset select,
-        .referral-fieldset textarea {
-            display: block;
-            width: 100%;
-            min-height: 47px;
-            padding: 11px 13px;
-            border: 1px solid #dce6e2;
-            border-radius: 8px;
-            background: #fff;
-            color: var(--ref-text);
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-        }
-
-        .referral-fieldset textarea {
-            min-height: 88px;
-            resize: vertical;
-        }
-
-        .referral-fieldset input:focus,
-        .referral-fieldset select:focus,
-        .referral-fieldset textarea:focus {
-            border-color: #4a9d8b;
-            box-shadow: 0 0 0 3px rgba(74, 157, 139, .12);
-        }
-
-        .referral-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .referral-fieldset .referral-check {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-            min-height: 42px;
-            padding: 10px 13px;
-            border: 1px solid var(--ref-border);
-            border-radius: 8px;
-            color: #4b615d;
-            background: #fff;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .referral-check input,
-        .referral-service-option input {
-            accent-color: var(--ref-primary);
-            flex: 0 0 auto;
-        }
-
-        .referral-check:has(input:checked) {
-            background: #eff8f4;
-            border-color: #7eb8a8;
-            color: var(--ref-primary-dark);
-        }
-
-        .referral-service-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .referral-fieldset .referral-service-option {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            min-height: 65px;
-            padding: 14px;
-            margin: 0;
-            border: 1px solid var(--ref-border);
-            border-radius: 10px;
-            color: #405651;
-            font-size: 13px;
-            font-weight: 650;
-            cursor: pointer;
-        }
-
-        .referral-service-option:has(input:checked) {
-            border-color: #7eb8a8;
-            background: #eff8f4;
-        }
-
-        .service-check-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 27px;
-            height: 27px;
-            flex: 0 0 27px;
-            border-radius: 7px;
-            background: #e6f1ed;
-            color: var(--ref-primary);
-        }
-
-        .referral-hint {
-            color: var(--ref-muted);
-            font-size: 12px;
-            line-height: 1.7;
-            margin-bottom: 0;
-        }
-
-        .referral-alert {
-            display: flex;
-            gap: 12px;
-            padding: 15px;
-            border-radius: 8px;
-            background: #fff7e9;
-            color: #8a6126;
-        }
-
-        .referral-alert i {
-            font-size: 18px;
-        }
-
-        .referral-alert p {
-            font-size: 12px;
-            line-height: 1.7;
-            margin: 0;
-        }
-
-        .referral-consent>p {
-            color: #647773;
-            font-size: 13px;
-            line-height: 1.9;
-        }
-
-        .referral-fieldset .referral-consent-check {
-            display: flex;
-            align-items: flex-start;
-            padding: 16px;
-            margin-top: 16px;
-            background: #f5f9f7;
-            line-height: 1.7;
-        }
-
-        .referral-consent-check input {
-            margin-top: 5px;
-        }
-
-        .referral-submit-area {
-            padding-top: 28px;
-        }
-
-        .referral-submit-area>p {
-            color: var(--ref-muted);
-            font-size: 12px;
-            margin-bottom: 18px;
-        }
-
-        .referral-submit-area>p i {
-            color: var(--ref-primary);
-            margin-right: 6px;
-        }
-
-        .referral-submit-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            min-height: 52px;
-            padding: 14px 25px;
-            border: 0;
-            border-radius: 9px;
-            background: var(--ref-primary);
-            color: #fff;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background .2s, transform .2s;
-        }
-
-        .referral-submit-btn:hover {
-            background: var(--ref-primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .field-error {
-            display: block;
-            color: #b42318;
-            font-size: 12px;
-            margin-top: 6px;
-        }
-
-        @media (max-width: 991px) {
-            .referral-main {
-                padding: 40px 0;
-            }
-
-            .referral-sidebar {
-                position: static;
-            }
-
-            .referral-hero {
-                padding: 75px 0;
-            }
-        }
-
-        @media (max-width: 575px) {
-            .referral-hero {
-                padding: 60px 0;
-            }
-
-            .referral-form-card {
-                padding: 23px 17px;
-            }
-
-            .referral-form-heading {
-                align-items: flex-start;
-            }
-
-            .referral-form-symbol {
-                flex-basis: 43px;
-                width: 43px;
-                height: 43px;
-                font-size: 20px;
-            }
-
-            .referral-fieldset {
-                padding: 24px 0;
-            }
-
-            .referral-fieldset legend {
-                font-size: 16px;
-                gap: 9px;
-            }
-
-            .referral-step {
-                flex-basis: 32px;
-                width: 32px;
-                height: 32px;
-            }
-
-            .referral-service-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .referral-submit-btn {
-                width: 100%;
-            }
-        }
-    </style>
+    
 @endsection
 
 
