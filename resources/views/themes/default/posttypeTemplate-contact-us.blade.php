@@ -28,7 +28,7 @@
                 <div class="row g-4 g-xl-5">
 
                     {{-- Contact Sidebar --}}
-                    <aside class="col-lg-4">
+                    {{-- <aside class="col-lg-4">
                         <div class="referral-sidebar">
                             <span class="referral-sidebar-label">WE ARE HERE TO HELP</span>
                             <h2>Get in touch</h2>
@@ -90,20 +90,20 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="referral-help-box">
+                            <div class="referral-help-box">
                                 <i class="bi bi-shield-check"></i>
                                 <div>
                                     <strong>Your information matters</strong>
                                     <p>Participant information should be handled securely
                                         and only by authorised personnel.</p>
                                 </div>
-                            </div> --}}
+                            </div>
 
                         </div>
-                    </aside>
+                    </aside> --}}
 
                     {{-- Referral Form --}}
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="referral-form-card">
 
                             <div class="referral-form-heading">
